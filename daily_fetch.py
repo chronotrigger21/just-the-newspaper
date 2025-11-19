@@ -22,11 +22,10 @@ import requests
 
 # Configuration
 RSS_FEEDS = [
-    "http://feeds.bbci.co.uk/news/world/rss.xml",
-    "https://moxie.foxnews.com/google-publisher/latest.xml",
-    "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
-    "https://www.theguardian.com/world/rss",
-    "https://feeds.npr.org/1001/rss.xml" 
+    # AP News (Unofficial Bridge - Official feeds are deprecated)
+    "http://associated-press.s3-website-us-east-1.amazonaws.com/topnews.xml",
+    # Reuters Agency (Requires User-Agent header)
+    "https://www.reutersagency.com/feed/?best-topics=top-news&post_type=best"
 ]
 OUTPUT_FILE = "src/data/daily_news.json"
 MAX_STORIES = 7
