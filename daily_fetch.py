@@ -9,6 +9,13 @@ from datetime import datetime
 # Load environment variables
 load_dotenv()
 
+# Check for API Key
+if not os.getenv("OPENAI_API_KEY"):
+    print("ERROR: OPENAI_API_KEY not found in environment variables.")
+    print("Please set the OPENAI_API_KEY secret in your GitHub Repository Settings.")
+    # We exit with code 1 to fail the build so the user knows something is wrong
+    exit(1)
+
 # Configuration
 RSS_FEEDS = [
     "https://apnews.com/hub/top-news/feed",
