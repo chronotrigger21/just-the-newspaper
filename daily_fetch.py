@@ -74,35 +74,33 @@ def fetch_news():
 def extract_content(url):
     """Extracts main text from a URL using trafilatura, handling Google News redirects."""
     try:
-        # Decode Google News URL to get the real source URL
-        try:
-            decoded_url = decoderv1(url)
-            if decoded_url.get("status"):
-                real_url = decoded_url["decoded_url"]
-                print(f"  - Decoded URL: {real_url}")
-                url = real_url
-            else:
-                print(f"  - Failed to decode URL: {url}")
-        except AttributeError:
-            # decoderv1 returns the string directly in some versions/cases
-            print(f"  - Decoded URL (direct): {decoded_url}")
-            url = decoded_url
-        except Exception as e:
-            print(f"  - Error decoding URL: {e}")
-            # Fallback to original URL if decoding fails
-
-        # Use requests to fetch the content
+        # Attempt to fetch with requests, using a session and headers to mimic a browser
+        session = requests.Session()
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Referer': 'https://news.google.com/'
         }
-        response = requests.get(url, headers=headers, timeout=15, allow_redirects=True)
         
+        # First request to get cookies/redirect
+        response = session.get(url, headers=headers, timeout=15, allow_redirects=True)
+        
+        # Check if we are stuck on a consent page (common with Google)
+        if "consent.google.com" in response.url or "window.wiz_progress" in response.text:
+            print(f"  - Hit consent/loading page at {response.url}")
+            # In a real browser, JS would handle this. 
+            # For now, we try to extract whatever we got, or fail gracefully.
+            # Often the redirect URL is in the HTML.
+            
         if response.status_code == 200:
             # Pass the HTML content directly to trafilatura
             result = trafilatura.extract(response.text, include_comments=False, include_tables=False)
-            return result if result else ""
-        else:
-            print(f"Failed to fetch URL {url} (Status: {response.status_code})")
+            if result:
+                return result
+                
+        print(f"  - Failed to extract content from {url} (Status: {response.status_code})")
+            
     except Exception as e:
         print(f"Error extracting {url}: {e}")
     return ""
