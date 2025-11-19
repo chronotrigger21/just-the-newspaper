@@ -1,0 +1,130 @@
+---
+import Layout from '../layouts/Layout.astro';
+import newsData from '../data/daily_news.json';
+
+// Get today's date for the header
+const today = new Date().toLocaleDateString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title="Just the Newspaper">
+	<main class="container">
+		<header class="masthead">
+			<div class="date-line border-bottom">{today}</div>
+			<h1 class="title text-center uppercase">Just the Newspaper</h1>
+			<div class="edition-line border-top border-double">
+				<span>Vol. I</span>
+				<span>Daily Edition</span>
+				<span>Free</span>
+			</div>
+		</header>
+
+		<section class="news-grid">
+			{newsData.map((story) => (
+				<article class="story">
+					<h2 class="story-title">{story.title}</h2>
+					<div class="story-meta">
+						<span class="source">{story.source}</span>
+					</div>
+					<p class="story-summary">{story.summary}</p>
+          <a href={story.url} target="_blank" rel="noopener noreferrer" class="read-more">Read Source</a>
+				</article>
+			))}
+		</section>
+
+    <footer class="footer border-top">
+      <p>&copy; {new Date().getFullYear()} Just the Newspaper. Powered by Astro & Python.</p>
+    </footer>
+	</main>
+</Layout>
+
+<style>
+	.masthead {
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+	}
+
+	.title {
+		font-size: 4rem;
+		font-weight: 900;
+		margin: 1rem 0;
+    font-family: 'Chomsky', serif; /* Fallback to Playfair if Chomsky not available, but we use Playfair in global */
+    font-family: var(--font-heading);
+    letter-spacing: -2px;
+	}
+
+	.date-line, .edition-line {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem 0;
+		font-family: var(--font-heading);
+		font-size: 0.9rem;
+    text-transform: uppercase;
+	}
+
+  .edition-line {
+    font-weight: bold;
+  }
+
+	.news-grid {
+		column-count: 3;
+		column-gap: 2rem;
+    column-rule: 1px solid #ccc;
+	}
+
+	.story {
+		break-inside: avoid;
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+	}
+  
+  .story:last-child {
+    border-bottom: none;
+  }
+
+	.story-title {
+		font-size: 1.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.story-meta {
+		font-style: italic;
+		font-size: 0.8rem;
+		margin-bottom: 0.5rem;
+		color: #666;
+	}
+
+	.story-summary {
+		font-size: 1rem;
+		text-align: justify;
+    margin-bottom: 0.5rem;
+	}
+  
+  .read-more {
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+	@media (max-width: 768px) {
+		.news-grid {
+			column-count: 1;
+		}
+    
+    .title {
+      font-size: 2.5rem;
+    }
+	}
+</style>

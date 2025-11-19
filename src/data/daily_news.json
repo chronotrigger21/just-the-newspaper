@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Global Markets Rally as Inflation Data Shows Cooling Trend",
+    "summary": "Stock markets across major financial centers surged today following the release of new economic data indicating a significant slowdown in inflation rates. Analysts suggest that central banks may pause interest rate hikes, providing much-needed relief to borrowers and investors alike. The technology and consumer goods sectors led the gains, reflecting renewed optimism in the global economic outlook.",
+    "source": "Reuters",
+    "url": "https://example.com/markets",
+    "date": "Wednesday, November 19, 2025"
+  },
+  {
+    "title": "Historic Peace Treaty Signed in Geneva",
+    "summary": "Diplomats from three warring nations gathered in Geneva today to sign a historic peace treaty, ending a decade-long conflict that has displaced millions. The agreement includes provisions for border demilitarization and a comprehensive refugee repatriation program. International observers have hailed the treaty as a triumph of diplomacy and a beacon of hope for the region.",
+    "source": "AP News",
+    "url": "https://example.com/peace-treaty",
+    "date": "Wednesday, November 19, 2025"
+  },
+  {
+    "title": "New Species of Deep-Sea Jellyfish Discovered",
+    "summary": "Marine biologists exploring the Mariana Trench have identified a previously unknown species of bioluminescent jellyfish. The creature, tentatively named 'Abyssal Lumina', possesses unique adaptations for survival in extreme pressure environments. This discovery challenges existing theories about deep-sea biodiversity and highlights the need for continued ocean exploration.",
+    "source": "Science Daily",
+    "url": "https://example.com/jellyfish",
+    "date": "Wednesday, November 19, 2025"
+  },
+  {
+    "title": "Local Library Reopens After Extensive Renovation",
+    "summary": "The city's central library reopened its doors this morning after a two-year renovation project. The modernized facility now features a dedicated digital archive, expanded community meeting spaces, and a rooftop garden. City officials expressed hope that the library will serve as a vibrant hub for education and culture for generations to come.",
+    "source": "Local Gazette",
+    "url": "https://example.com/library",
+    "date": "Wednesday, November 19, 2025"
+  },
+  {
+    "title": "Championship Finals Set for Weekend Showdown",
+    "summary": "The stage is set for the national championship finals this weekend, with the two top-seeded teams preparing to face off. Both squads have dominated the season, setting records for defensive efficiency and offensive scoring. Sports analysts predict a close match, with the outcome likely to be decided in the final minutes of play.",
+    "source": "Sports Weekly",
+    "url": "https://example.com/championship",
+    "date": "Wednesday, November 19, 2025"
+  }
+]
