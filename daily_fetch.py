@@ -15,68 +15,6 @@ if not os.getenv("OPENAI_API_KEY"):
     print("Please set the OPENAI_API_KEY secret in your GitHub Repository Settings.")
     # We exit with code 1 to fail the build so the user knows something is wrong
     exit(1)
-
-import requests
-
-# ... (imports)
-
-# Configuration
-RSS_FEEDS = [
-    # AP News (Unofficial Bridge - Official feeds are deprecated)
-    "http://associated-press.s3-website-us-east-1.amazonaws.com/topnews.xml",
-    # Reuters Agency (Requires User-Agent header)
-    "https://www.reutersagency.com/feed/?best-topics=top-news&post_type=best"
-]
-OUTPUT_FILE = "src/data/daily_news.json"
-MAX_STORIES = 7
-
-def fetch_news():
-    """Fetches top stories from RSS feeds."""
-    print("Fetching news...")
-    stories = []
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    
-    for feed_url in RSS_FEEDS:
-        print(f"Parsing feed: {feed_url}")
-        try:
-            response = requests.get(feed_url, headers=headers, timeout=10)
-            if response.status_code != 200:
-                print(f"  - Failed to fetch feed (Status: {response.status_code})")
-                continue
-                
-            feed = feedparser.parse(response.content)
-            
-            if not feed.entries:
-                print("  - No entries found in feed.")
-                continue
-                
-            print(f"  - Found {len(feed.entries)} entries.")
-            
-            for entry in feed.entries[:3]: # Get top 3 from each
-                stories.append({
-                    "title": entry.title,
-                    "link": entry.link,
-                    "source": feed.feed.title if 'title' in feed.feed else "Unknown",
-                    "published": entry.published if 'published' in entry else datetime.now().isoformat()
-                })
-                if len(stories) >= MAX_STORIES * 2: 
-                    break
-        except Exception as e:
-            print(f"  - Error fetching feed: {e}")
-            
-        if len(stories) >= MAX_STORIES * 2:
-            break
-            
-    print(f"Fetched {len(stories)} raw stories.")
-    return stories[:MAX_STORIES]
-
-def extract_content(url):
-    """Extracts main text from a URL using trafilatura."""
-    try:
-        downloaded = trafilatura.fetch_url(url)
-        if downloaded:
             result = trafilatura.extract(downloaded, include_comments=False, include_tables=False)
             return result if result else ""
     except Exception as e:
