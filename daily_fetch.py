@@ -83,6 +83,10 @@ def extract_content(url):
                 url = real_url
             else:
                 print(f"  - Failed to decode URL: {url}")
+        except AttributeError:
+            # decoderv1 returns the string directly in some versions/cases
+            print(f"  - Decoded URL (direct): {decoded_url}")
+            url = decoded_url
         except Exception as e:
             print(f"  - Error decoding URL: {e}")
             # Fallback to original URL if decoding fails
