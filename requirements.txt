@@ -3,3 +3,4 @@ trafilatura
 openai
 python-dotenv
 requests
+googlenewsdecoder

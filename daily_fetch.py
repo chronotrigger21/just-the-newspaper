@@ -3,6 +3,7 @@ import json
 import feedparser
 import trafilatura
 import requests
+from googlenewsdecoder import decoderv1
 from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime
@@ -73,7 +74,20 @@ def fetch_news():
 def extract_content(url):
     """Extracts main text from a URL using trafilatura, handling Google News redirects."""
     try:
-        # Use requests to follow redirects and get the final content
+        # Decode Google News URL to get the real source URL
+        try:
+            decoded_url = decoderv1(url)
+            if decoded_url.get("status"):
+                real_url = decoded_url["decoded_url"]
+                print(f"  - Decoded URL: {real_url}")
+                url = real_url
+            else:
+                print(f"  - Failed to decode URL: {url}")
+        except Exception as e:
+            print(f"  - Error decoding URL: {e}")
+            # Fallback to original URL if decoding fails
+
+        # Use requests to fetch the content
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
