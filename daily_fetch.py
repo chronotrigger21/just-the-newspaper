@@ -16,10 +16,17 @@ if not os.getenv("OPENAI_API_KEY"):
     # We exit with code 1 to fail the build so the user knows something is wrong
     exit(1)
 
+import requests
+
+# ... (imports)
+
 # Configuration
 RSS_FEEDS = [
-    "https://apnews.com/hub/top-news/feed",
-    "https://www.reutersagency.com/feed/?best-topics=top-news&post_type=best"
+    "http://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://moxie.foxnews.com/google-publisher/latest.xml",
+    "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+    "https://www.theguardian.com/world/rss",
+    "https://feeds.npr.org/1001/rss.xml" 
 ]
 OUTPUT_FILE = "src/data/daily_news.json"
 MAX_STORIES = 7
@@ -28,20 +35,43 @@ def fetch_news():
     """Fetches top stories from RSS feeds."""
     print("Fetching news...")
     stories = []
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    
     for feed_url in RSS_FEEDS:
         print(f"Parsing feed: {feed_url}")
-        feed = feedparser.parse(feed_url)
-        for entry in feed.entries[:5]: # Get top 5 from each to start
-            stories.append({
-                "title": entry.title,
-                "link": entry.link,
-                "source": feed.feed.title if 'title' in feed.feed else "Unknown",
-                "published": entry.published if 'published' in entry else datetime.now().isoformat()
-            })
-            if len(stories) >= MAX_STORIES * 2: # Cap total fetched before filtering
-                break
+        try:
+            response = requests.get(feed_url, headers=headers, timeout=10)
+            if response.status_code != 200:
+                print(f"  - Failed to fetch feed (Status: {response.status_code})")
+                continue
+                
+            feed = feedparser.parse(response.content)
+            
+            if not feed.entries:
+                print("  - No entries found in feed.")
+                continue
+                
+            print(f"  - Found {len(feed.entries)} entries.")
+            
+            for entry in feed.entries[:3]: # Get top 3 from each
+                stories.append({
+                    "title": entry.title,
+                    "link": entry.link,
+                    "source": feed.feed.title if 'title' in feed.feed else "Unknown",
+                    "published": entry.published if 'published' in entry else datetime.now().isoformat()
+                })
+                if len(stories) >= MAX_STORIES * 2: 
+                    break
+        except Exception as e:
+            print(f"  - Error fetching feed: {e}")
+            
+        if len(stories) >= MAX_STORIES * 2:
+            break
+            
     print(f"Fetched {len(stories)} raw stories.")
-    return stories[:MAX_STORIES] # Return top N
+    return stories[:MAX_STORIES]
 
 def extract_content(url):
     """Extracts main text from a URL using trafilatura."""
