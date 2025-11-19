@@ -87,14 +87,20 @@ def main():
     print(f"Starting daily fetch at {datetime.now()}")
     
     raw_stories = fetch_news()
+    if not raw_stories:
+        print("CRITICAL: No raw stories fetched from RSS feeds.")
+        exit(1)
+
     processed_stories = []
     
     for story in raw_stories:
         print(f"Processing: {story['title']}")
         text = extract_content(story['link'])
         if text:
+            print(f"  - Extracted {len(text)} chars. Summarizing...")
             summary = summarize_article(text)
             if summary:
+                print("  - Summary generated successfully.")
                 processed_stories.append({
                     "title": story['title'],
                     "summary": summary,
@@ -102,10 +108,18 @@ def main():
                     "url": story['link'],
                     "date": datetime.now().strftime("%A, %B %d, %Y")
                 })
+            else:
+                print("  - Failed to generate summary.")
+        else:
+            print("  - Failed to extract content.")
         
         if len(processed_stories) >= MAX_STORIES:
             break
             
+    if not processed_stories:
+        print("CRITICAL: No stories were processed successfully.")
+        exit(1)
+
     save_news(processed_stories)
 
 if __name__ == "__main__":
