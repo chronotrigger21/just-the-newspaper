@@ -71,12 +71,20 @@ def fetch_news():
     return stories[:MAX_STORIES + 3] # Return a few extra for processing
 
 def extract_content(url):
-    """Extracts main text from a URL using trafilatura."""
+    """Extracts main text from a URL using trafilatura, handling Google News redirects."""
     try:
-        downloaded = trafilatura.fetch_url(url)
-        if downloaded:
-            result = trafilatura.extract(downloaded, include_comments=False, include_tables=False)
+        # Use requests to follow redirects and get the final content
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=15, allow_redirects=True)
+        
+        if response.status_code == 200:
+            # Pass the HTML content directly to trafilatura
+            result = trafilatura.extract(response.text, include_comments=False, include_tables=False)
             return result if result else ""
+        else:
+            print(f"Failed to fetch URL {url} (Status: {response.status_code})")
     except Exception as e:
         print(f"Error extracting {url}: {e}")
     return ""
